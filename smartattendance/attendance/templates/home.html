@@ -1,0 +1,171 @@
+{% comment %} <h1>Smart Attendance System</h1>
+<a href="/register/">Register Student</a><br>
+<a href="/dashboard/">Dashboard</a> {% endcomment %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Attendance System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 50px;
+            background: rgba(0,0,0,0.2);
+        }
+
+        nav h2 {
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 120px 20px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            background: white;
+            color: #2a5298;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #f1f1f1;
+            transform: scale(1.05);
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 60px 20px;
+            background: white;
+            color: black;
+        }
+
+        .card {
+            background: #f4f4f4;
+            padding: 30px;
+            margin: 20px;
+            border-radius: 10px;
+            width: 280px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+        }
+        .logout-btn {
+            background: #e74c3c;
+            padding: 6px 15px;
+            border-radius: 20px;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #111;
+        }
+    </style>
+</head>
+<body>
+
+{% comment %} <nav>
+    <h2>RFID Smart Attendance</h2>
+    <div>
+        <a href="/register/">Register</a>
+        <a href="/login/">Student Login</a>
+        <a href="/admin/">Admin</a>
+    </div>
+</nav> {% endcomment %}
+<nav>
+    <h2>RFID Smart Attendance</h2>
+    <div>
+        {% if user.is_authenticated %}
+            <a href="/dashboard/">Dashboard</a>
+            <a href="/history/">History</a>
+            {% comment %} <a href="/logout/" class="logout-btn">Logout</a> {% endcomment %}
+            <a href="{% url "logout" %}" class="btn logout-btn">Logout</a>
+        {% else %}
+            <a href="/register/">Register</a>
+            <a href="/login/">Student Login</a>
+            <a href="/admin/">Admin</a>
+        {% endif %}
+    </div>
+</nav>
+
+<section class="hero">
+    <h1>Smart Attendance System</h1>
+    <p>RFID + IoT Based Automated Attendance Management</p>
+
+    <a href="/register/" class="btn">Register Student</a>
+    <a href="/login/" class="btn">Login</a>
+</section>
+
+<section class="features">
+    <div class="card">
+        <h3>RFID Based</h3>
+        <p>Fast and secure attendance using RFID cards.</p>
+    </div>
+
+    <div class="card">
+        <h3>IoT Enabled</h3>
+        <p>Real-time data transfer using WiFi module.</p>
+    </div>
+
+    <div class="card">
+        <h3>Web Dashboard</h3>
+        <p>Manage students and attendance using Django.</p>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 Smart Attendance System | By Dershaa</p>
+</footer>
+
+</body>
+</html>
+

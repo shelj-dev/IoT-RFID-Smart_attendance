@@ -1,0 +1,146 @@
+{% comment %} <h2>Attendance History</h2>
+
+{% for record in records %}
+<p>{{ record.student.name }} - {{ record.date }} - {{ record.time }}</p>
+{% endfor %} {% endcomment %}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .filter-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .filter-box input {
+            padding: 8px;
+            margin-right: 10px;
+        }
+
+        .filter-box button {
+            padding: 8px 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        table th {
+            background: #f2f2f2;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .back-btn a {
+            text-decoration: none;
+            padding: 8px 15px;
+            background: #2ecc71;
+            color: white;
+            border-radius: 20px;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h2>Attendance History</h2>
+</div>
+
+<div class="container">
+
+    <div class="filter-box">
+        <form method="GET">
+            <label>Select Date:</label>
+            <input type="date" name="date">
+            <button type="submit">Filter</button>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+
+            {% for record in records %}
+            <tr>
+                <td>{{ record.date }}</td>
+                <td>{{ record.time }}</td>
+                <td>{{ record.status }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="no-data">No attendance records found</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="back-btn">
+        <a href="/dashboard/">← Back to Dashboard</a>
+    </div>
+
+</div>
+
+</body>
+</html>
+
