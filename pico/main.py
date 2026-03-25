@@ -1,6 +1,18 @@
 from machine import Pin, SPI
 from os import uname
 
+import utime
+import time
+import network
+import time
+import urequests
+from machine import Pin
+
+WIFI_SSID = "Smith"
+WIFI_PASSWORD = "theriyathu"
+
+SERVER_IP_URL = "http://10.237.39.171:8000/"
+
 
 class MFRC522:
 
@@ -392,13 +404,10 @@ import urequests
 from machine import Pin
 
 
+#reader = MFRC522(spi_id=0,sck=6,miso=4,mosi=7,cs=5,rst=22)
 reader = MFRC522(spi_id=0,sck=6,miso=4,mosi=7,cs=5,rst=22)
 
 
-WIFI_SSID = "iot kids"
-WIFI_PASSWORD = "bright kidoos"
-
-SERVER_IP_URL = "http://10.189.178.236:8000/"
 
 wifi_status = False
 
@@ -454,7 +463,7 @@ def read_rfid_data():
 def send_data(data):
 
     payload = {
-        "sensor": data
+        "rfid": data
     }
 
     url = SERVER_IP_URL + "api/get-sensor/"
@@ -490,22 +499,40 @@ def get_data():
     except Exception as e:
         print("Get error:", e)
 
+def ensure_wifi():
+    wlan = network.WLAN(network.STA_IF)
 
+    if not wlan.isconnected():
+        print("WiFi lost. Reconnecting...")
+        return connect_wifi()
+
+    return True
+
+
+last_card = None
 
 
 def main():
+    connect_wifi()
+
+    global last_card
+
     while True:
+        # 🔄 Always ensure WiFi
+        wifi_ok = ensure_wifi()
+
         data = read_rfid_data()
 
-        if wifi_status:
-            send_data(data)
+        print(data)
+        if data and data != last_card:
+            last_card = data
 
-            data = get_data()
+            if wifi_ok:
+                send_data(data)
 
-            print(data)
-
+                response = get_data()
+                print(response)
 
         utime.sleep_ms(500)
-
 
 main()

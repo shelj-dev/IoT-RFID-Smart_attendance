@@ -4,94 +4,87 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import SensorRFID, Attendance, Profile
 from django.views.decorators.http import require_GET
 from django.utils import timezone
+from django.shortcuts import render, redirect
+from .forms import *
+from django.utils.timezone import now
+from datetime import timedelta
+
+
+def home(request):
+    return render(request, "new/home.html")
+
+
+def create_attendance(rfid):
+    try:
+        user = Profile.objects.get(rfid=rfid)
+    except Profile.DoesNotExist:
+        return "User does not exist"
+
+    today_date = now().date()
+
+    already_marked = Attendance.objects.filter(
+        user=user,
+        time_in__date=today_date
+    ).exists()
+
+    if already_marked:
+        return "Already attendance registered"
+
+    Attendance.objects.create(user=user)
+    return "Attendance created"
 
 
 @csrf_exempt
 def get_sensor_data(request):
 
-    if request.method == "POST":
+    if request.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=405)
+
+    try:
         data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
 
-        value = data.get("rfid")
-        SensorRFID.objects.create(rfid_data=value)
-        print("Sensor value:", value)
+    value = data.get("rfid")
 
-        return JsonResponse({
-            "status": "received",
-            "sensor": value
-        })
+    if not value:
+        return JsonResponse({"error": "RFID is required"}, status=400)
 
-    return JsonResponse({"error": "POST required"})
+    last = SensorRFID.objects.order_by("-time_stamp").first()
+    if last and last.rfid_data == value and now() - last.time_stamp < timedelta(seconds=2):
+        return JsonResponse({"status": "duplicate ignored"})
+
+    SensorRFID.objects.create(rfid_data=value)
+    print("Sensor value:", value)
+
+    attendance_message = create_attendance(value)
+
+    return JsonResponse({
+        "status": "received",
+        "rfid": value,
+        "attendance": attendance_message
+    })
 
 
-@require_GET
-def send_sensor_data(request):
+def register_user(request):
+    form = ProfileForm()
+    if request.method == "POST":
+        form = ProfileForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("home")
+    return render(request, "new/register_user.html", {"form":form})
 
-    data = {
-        "relay": "hello"
-    }
 
-    latest_sensor = SensorRFID.objects.order_by('-id').first()
+def get_rfid_api(request):
+    rfid = SensorRFID.objects.order_by("-time_stamp").first()
 
-    if not latest_sensor or not latest_sensor.rfid_data:
-        data.update({
-            "status": "error",
-            "message": "No RFID data"
-        })
-        return JsonResponse(data)
+    if not rfid:
+        return JsonResponse({"message": "No data available"})
 
-    rfid_value = latest_sensor.rfid_data
-
-    
-    user = Profile.objects.filter(rfid=rfid_value).first()
-
-    if not user:
-        data.update({
-            "status": "invalid",
-            "message": "RFID not registered",
-            "rfid": rfid_value
-        })
-        return JsonResponse(data)
-
-    
-    today = timezone.now().date()
-    attendance = Attendance.objects.filter(user=user, date=today).first()
-
-    if attendance:
-        if attendance.logout_time is None:
-            attendance.logout_time = timezone.now()
-            attendance.save()
-
-            data.update({
-                "status": "logout",
-                "user": user.name
-            })
-        else:
-            data.update({
-                "status": "already_logged_out",
-                "user": user.name
-            })
+    if now() - rfid.time_stamp <= timedelta(seconds=5):
+        return JsonResponse({"message": rfid.rfid_data})
     else:
-        Attendance.objects.create(
-            user=user,
-            date=today,
-            login_time=timezone.now()
-        )
-
-        data.update({
-            "status": "login",
-            "user": user.name
-        })
-
-    return JsonResponse(data)
-
-    # check the RFID data with the available users.
-    # if user exists check loggedin
-    # if not loggedin register the user as loggedin 
-
-    
+        return JsonResponse({"message": "Card not found"})
 
 
-
-# Register new user by admin
-# Connect rfid to the user
