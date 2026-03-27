@@ -8,10 +8,11 @@ import time
 import urequests
 from machine import Pin
 
-WIFI_SSID = "Smith"
-WIFI_PASSWORD = "theriyathu"
+WIFI_SSID = "iot kids"
+WIFI_PASSWORD = "iot kidoos"
 
 SERVER_IP_URL = "http://10.237.39.171:8000/"
+
 
 
 class MFRC522:
@@ -109,7 +110,9 @@ class MFRC522:
         while True:
             n = self._rreg(0x04)
             i -= 1
-            if ~((i != 0) and ~(n & 0x01) and ~(n & wait_irq)):
+            # if ~((i != 0) and ~(n & 0x01) and ~(n & wait_irq)):
+            #     break
+            if not ((i != 0) and not (n & 0x01) and not (n & wait_irq)):
                 break
 
         self._cflags(0x0D, 0x80)
@@ -394,7 +397,6 @@ class MFRC522:
 
 
 
-
 # from mfrc522 import MFRC522
 import utime
 import time
@@ -409,7 +411,7 @@ reader = MFRC522(spi_id=0,sck=6,miso=4,mosi=7,cs=5,rst=22)
 
 
 
-wifi_status = False
+wifi_status = False          
 
 
 
