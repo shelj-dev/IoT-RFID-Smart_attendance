@@ -9,9 +9,9 @@ import urequests
 from machine import Pin
 
 WIFI_SSID = "iot kids"
-WIFI_PASSWORD = "iot kidoos"
+WIFI_PASSWORD = "bright kidoos"
 
-SERVER_IP_URL = "http://10.237.39.171:8000/"
+SERVER_IP_URL = "http://10.244.94.236:8000/"
 
 
 
@@ -407,7 +407,7 @@ from machine import Pin
 
 
 #reader = MFRC522(spi_id=0,sck=6,miso=4,mosi=7,cs=5,rst=22)
-reader = MFRC522(spi_id=0,sck=6,miso=4,mosi=7,cs=5,rst=22)
+reader = MFRC522(spi_id=0,sck=6,miso=4,mosi=7,cs=5,rst=14)
 
 
 
