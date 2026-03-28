@@ -1,5 +1,34 @@
-<form action="" method="post">
+<form id="userForm" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button>Submit</button>
+
+    <label for="rfidDisplay">RFID:</label>
+    <input type="text" id="rfidDisplay" readonly placeholder="Not available">
+    <input type="hidden" name="rfid" id="rfidField">
+
+    <button type="button" id="getRfidBtn">Get RFID</button>
+
+    <br><br>
+    <button type="submit">Submit</button>
 </form>
+<script>
+    const getBtn = document.getElementById("getRfidBtn");
+
+    getBtn.addEventListener("click", async function () {
+        try {
+            const response = await fetch("/api/get-rfid/");
+            const data = await response.json();
+
+            if (data.rfid) {
+                document.getElementById("rfidDisplay").value = data.rfid;
+                document.getElementById("rfidField").value = data.rfid;
+            } else {
+                document.getElementById("rfidDisplay").value = "Not available";
+                document.getElementById("rfidField").value = "";
+            }
+        } catch (error) {
+            console.error(error);
+            document.getElementById("rfidDisplay").value = "Error fetching RFID";
+        }
+    });
+</script>

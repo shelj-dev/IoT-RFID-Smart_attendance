@@ -4,10 +4,14 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import SensorRFID, Attendance, Profile
 from django.views.decorators.http import require_GET
 from django.utils import timezone
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import *
 from django.utils.timezone import now
 from datetime import timedelta
+from django.http import JsonResponse
+from django.utils import timezone
+from datetime import timedelta
+
 
 
 def home(request):
@@ -15,9 +19,10 @@ def home(request):
 
 
 def create_attendance(rfid):
-    try:
-        user = Profile.objects.get(rfid=rfid)
-    except Profile.DoesNotExist:
+    user = Profile.objects.filter(rfid=rfid).first()
+
+    if not user:
+        print("not user")
         return "User does not exist"
 
     today_date = now().date()
@@ -34,6 +39,45 @@ def create_attendance(rfid):
     return "Attendance created"
 
 
+def register_user(request):
+    form = ProfileForm()
+    if request.method == "POST":
+        form = ProfileForm(request.POST)
+        if form.is_valid():
+            profile = form.save(commit=False)
+
+            rfid = request.POST.get("rfid")  # ✅ get from POST directly
+
+            if not rfid:
+                form.add_error(None, "RFID is required. Please scan your card.")
+                return render(request, "new/register_user.html", {"form": form})
+
+            profile.rfid = rfid
+            profile.save()
+
+            return redirect("home")
+
+    return render(request, "new/register_user.html", {"form": form})
+
+
+@csrf_exempt
+def get_rfid(request):
+    data = SensorRFID.objects.last()
+    
+    if data is None:
+        return JsonResponse({"rfid": None})
+    
+    # Check if timestamp is within last few seconds
+    if timezone.now() - data.time_stamp <= timedelta(seconds=5):
+        rfid = data.rfid_data
+    else:
+        rfid = None
+
+    print("RFID frontend:", rfid)
+
+    return JsonResponse({"rfid": rfid})
+
+# PICO API
 @csrf_exempt
 def get_sensor_data(request):
 
@@ -43,21 +87,20 @@ def get_sensor_data(request):
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
+        print("Error")
         return JsonResponse({"error": "Invalid JSON"}, status=400)
 
+    print(data)
     value = data.get("rfid")
 
+
     if not value:
-        return JsonResponse({"error": "RFID is required"}, status=400)
-
-    last = SensorRFID.objects.order_by("-time_stamp").first()
-    if last and last.rfid_data == value and now() - last.time_stamp < timedelta(seconds=2):
-        return JsonResponse({"status": "duplicate ignored"})
-
-    SensorRFID.objects.create(rfid_data=value)
-    print("Sensor value:", value)
-
-    attendance_message = create_attendance(value)
+        attendance_message = None
+    else:
+        SensorRFID.objects.create(rfid_data=value)
+        print("Sensor value:", value)
+        attendance_message = create_attendance(value)
+        # attendance_message = None
 
     return JsonResponse({
         "status": "received",
@@ -66,16 +109,7 @@ def get_sensor_data(request):
     })
 
 
-def register_user(request):
-    form = ProfileForm()
-    if request.method == "POST":
-        form = ProfileForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("home")
-    return render(request, "new/register_user.html", {"form":form})
-
-
+# PICO api
 def get_rfid_api(request):
     rfid = SensorRFID.objects.order_by("-time_stamp").first()
 
@@ -86,5 +120,3 @@ def get_rfid_api(request):
         return JsonResponse({"message": rfid.rfid_data})
     else:
         return JsonResponse({"message": "Card not found"})
-
-

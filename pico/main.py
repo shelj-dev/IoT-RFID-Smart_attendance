@@ -11,7 +11,7 @@ from machine import Pin
 WIFI_SSID = "iot kids"
 WIFI_PASSWORD = "bright kidoos"
 
-SERVER_IP_URL = "http://10.244.94.236:8000/"
+SERVER_IP_URL = "http://10.244.94.171:8000/"
 
 
 
@@ -526,14 +526,15 @@ def main():
         data = read_rfid_data()
 
         print(data)
-        if data and data != last_card:
-            last_card = data
+        #if data and data != last_card:
+         #   last_card = data
 
-            if wifi_ok:
-                send_data(data)
+        if wifi_ok:
+            print(data)
+            send_data(data)
 
-                response = get_data()
-                print(response)
+            response = get_data()
+            print(response)
 
         utime.sleep_ms(500)
 

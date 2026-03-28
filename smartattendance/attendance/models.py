@@ -8,7 +8,7 @@ class Profile(models.Model):
     rfid = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.user.username
+        return self.username
 
 
 class Attendance(models.Model):
