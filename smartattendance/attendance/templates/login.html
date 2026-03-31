@@ -1,170 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Student Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base.html" %}
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
-        }
+{% block title %}Login{% endblock %}
 
-        body {
-            height: 100vh;
-            display: flex;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-        }
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow">
+    <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
 
-        /* Left Section */
-        .left {
-            flex: 1;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 60px;
-        }
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username"
+               class="w-full p-2 mb-3 border rounded">
 
-        .left h1 {
-            font-size: 40px;
-            margin-bottom: 20px;
-        }
+        <input type="password" name="password" placeholder="Password"
+               class="w-full p-2 mb-3 border rounded">
 
-        .left p {
-            font-size: 18px;
-            line-height: 1.6;
-            opacity: 0.9;
-        }
-
-        /* Right Section */
-        .right {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-card {
-            width: 350px;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            color: white;
-        }
-
-        .login-card h2 {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            outline: none;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border-radius: 25px;
-            border: none;
-            background: #00c6ff;
-            background: linear-gradient(to right, #00c6ff, #0072ff);
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-        }
-
-        .error {
-            color: #ffb3b3;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .register-link {
-            text-align: center;
-            margin-top: 15px;
-        }
-
-        .register-link a {
-            color: #fff;
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            .left {
-                text-align: center;
-                padding: 30px;
-            }
-        }
-    </style>
-</head>
-<body>
-
-<div class="left">
-    <h1>Smart Attendance System</h1>
-    <p>
-        RFID + IoT Based Attendance Management System  
-        Secure login access for students to track attendance records.
-    </p>
+        <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+            Login
+        </button>
+    </form>
 </div>
-
-<div class="right">
-    <div class="login-card">
-        <h2>Student Login</h2>
-
-        {% if messages %}
-            {% for message in messages %}
-                <div class="error">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-
-        <form method="POST">
-            {% csrf_token %}
-
-            <div class="input-group">
-                <label>Username</label>
-                <input type="text" name="username" required>
-            </div>
-
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" name="password" required>
-            </div>
-
-            <button type="submit" class="btn">Login</button>
-        </form>
-
-        <div class="register-link">
-            <p>Don't have an account? <a href="/register/">Register</a></p>
-        </div>
-    </div>
-</div>
-
-</body>
-</html>
+{% endblock %}

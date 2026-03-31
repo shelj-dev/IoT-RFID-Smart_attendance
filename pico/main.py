@@ -13,6 +13,7 @@ WIFI_PASSWORD = "bright kidoos"
 
 SERVER_IP_URL = "http://10.244.94.171:8000/"
 
+led = Pin("LED", Pin.OUT)
 
 
 class MFRC522:
@@ -474,7 +475,13 @@ def send_data(data):
 
     try:
         r = urequests.post(url, json=payload)
+        data = r.json()
         print("Server response:", r.text)
+        # Server response: {"status": "received", "rfid": "105853454", "attendance": "Already attendance registered"}
+        if data.get("attendance") == "Already attendance registered":
+            led.value(1)
+            time.sleep(3)
+            led.value(0)
 
     except Exception as e:
         print("Send error:", e)

@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My App</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Optional custom styles -->
+    {% comment %} <link rel="stylesheet" href="{% static 'css/style.css' %}"> {% endcomment %}
+
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+<nav class="flex justify-between items-center px-6 md:px-12 py-4 bg-black/20 backdrop-blur">
+    <h2 class="text-xl font-bold">RFID Smart Attendance</h2>
+
+    <div class="space-x-3">
+        {% if user.is_authenticated %}
+            <a href="{% url 'home' %}" 
+               class="px-4 py-2 bg-white text-blue-700 rounded-full font-semibold hover:bg-gray-200 transition">
+               Home
+            </a>
+            <a href="{% url 'register_user' %}" 
+               class="px-4 py-2 bg-white text-blue-700 rounded-full font-semibold hover:bg-gray-200 transition">
+               Register User
+            </a>
+
+            <a href="{% url 'all_user' %}" 
+               class="px-4 py-2 bg-white text-blue-700 rounded-full font-semibold hover:bg-gray-200 transition">
+               Users
+            </a>
+
+            <a href="{% url 'all_attendance' %}" 
+               class="px-4 py-2 bg-white text-blue-700 rounded-full font-semibold hover:bg-gray-200 transition">
+               Attendance
+            </a>
+
+            <a href="{% url 'logout' %}" 
+               class="px-4 py-2 bg-red-500 rounded-full hover:bg-red-600 transition">
+               Logout
+            </a>
+        {% else %}
+            <a href="{% url 'login' %}" 
+               class="px-4 py-2 bg-white text-blue-700 rounded-full font-semibold hover:bg-gray-200 transition">
+               Login
+            </a>
+
+            <a href="/admin/" class="font-semibold hover:underline">
+                Admin
+            </a>
+        {% endif %}
+    </div>
+</nav>
+
+    <!-- 🔔 Messages -->
+    <div class="container mx-auto px-4 mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-4 p-3 rounded 
+                    {% if message.tags == 'error' %}bg-red-500 text-white
+                    {% elif message.tags == 'success' %}bg-green-500 text-white
+                    {% else %}bg-gray-300 text-black{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- 📦 Main Content -->
+    <main class="container mx-auto px-4 py-6">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- 🔻 Footer -->
+    <footer class="bg-gray-800 text-white text-center py-4 mt-10">
+        <p>© 2026 Smart Attendance System</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+{% extends "includes/base.html" %}
+
+
+{% comment %} {{ attendance }}
+{% for a in attendance %}
+{{ a.user.username }}
+{{ a.user.roll_no }}
+{{ a.user.rfid }}
+{{ a.time_in }}
+<hr>
+{% endfor %} {% endcomment %}
+
+
+
+{% block content %}
+
+<div class="max-w-6xl mx-auto mt-10 bg-white text-black p-6 rounded-xl shadow-lg">
+
+    <h2 class="text-2xl font-bold mb-6 text-center">
+        Attendance Records
+    </h2>
+
+    <div class="overflow-x-auto">
+        <table class="w-full border border-gray-200 rounded-lg overflow-hidden">
+
+            <!-- Header -->
+            <thead class="bg-green-600 text-white">
+                <tr>
+                    <th class="py-3 px-4 text-left">Username</th>
+                    <th class="py-3 px-4 text-left">Roll No</th>
+                    <th class="py-3 px-4 text-left">RFID</th>
+                    <th class="py-3 px-4 text-left">Time In</th>
+                </tr>
+            </thead>
+
+            <!-- Body -->
+            <tbody class="divide-y">
+                {% for a in attendance %}
+                <tr class="hover:bg-gray-100 transition">
+                    <td class="py-3 px-4">{{ a.user.username }}</td>
+                    <td class="py-3 px-4">{{ a.user.roll_no }}</td>
+                    <td class="py-3 px-4 font-mono text-sm text-gray-700">
+                        {{ a.user.rfid }}
+                    </td>
+                    <td class="py-3 px-4">
+                        {{ a.time_in|date:"d M Y, h:i A" }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-gray-500">
+                        No attendance records found
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}
