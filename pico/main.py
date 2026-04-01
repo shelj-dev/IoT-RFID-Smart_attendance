@@ -8,10 +8,10 @@ import time
 import urequests
 from machine import Pin
 
-WIFI_SSID = "iot kids"
-WIFI_PASSWORD = "bright kidoos"
+WIFI_SSID = "CSELABWIFI"
+WIFI_PASSWORD = "274998csc"
 
-SERVER_IP_URL = "http://10.244.94.171:8000/"
+SERVER_IP_URL = "http:// 192.168.25.39:8000/"
 
 led = Pin("LED", Pin.OUT)
 
